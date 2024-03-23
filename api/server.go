@@ -21,6 +21,8 @@ func (s *ApiServer) Start() error {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/create", s.handleCreateBlockChain)
+	mux.HandleFunc("/getlastblock", s.handleGetLastBlock)
+	mux.HandleFunc("/getblockbyid", s.handleGetBlockByID)
 
 	err := http.ListenAndServe(s.Addr, mux)
 	if err != nil {
@@ -46,4 +48,60 @@ func (s *ApiServer) handleCreateBlockChain(w http.ResponseWriter, r *http.Reques
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+
+func (s *ApiServer) handleGetLastBlock(w http.ResponseWriter, r *http.Request) {
+	req := types.GetLastBlock{}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	Exp := way.Explorer{
+		Path: s.StoragePath,
+		Name: req.ChainName,
+	}
+
+	block, err := Exp.GetLastBlock()
+	if err!= nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	jsonResp, err := json.Marshal(block)
+	if err!= nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResp)
+}
+
+
+func (s *ApiServer) handleGetBlockByID(w http.ResponseWriter, r *http.Request) {
+	req := types.GetBlockByID{}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	Exp := way.Explorer{
+		Path: s.StoragePath,
+		Name: req.ChainName,
+	}
+
+	block, err := Exp.GetBlockByID(req.ID)
+	if err!= nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+	}
+
+	jsonResp, err := json.Marshal(block)
+	if err!= nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(jsonResp)
 }
