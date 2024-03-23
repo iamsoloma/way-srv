@@ -11,8 +11,9 @@ import (
 )
 
 type ApiServer struct {
-	Addr string
-	TimeOut time.Duration
+	Addr        string
+	StoragePath string
+	TimeOut     time.Duration
 	IdleTimeOut time.Duration
 }
 
@@ -36,10 +37,11 @@ func (s *ApiServer) handleCreateBlockChain(w http.ResponseWriter, r *http.Reques
 	}
 
 	Exp := way.Explorer{
-		Path: "blockchains" + req.Chain,
+		Path: s.StoragePath,
+		Name: req.ChainName,
 	}
 
-	if err := Exp.CreateBlockChain(req.Genesis, req.Time_UTC); err != nil {
+	if err := Exp.CreateBlockChain(req.Genesis, time.Now().UTC()); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 

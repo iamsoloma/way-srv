@@ -8,21 +8,21 @@ import (
 )
 
 type Config struct {
-	Mode string `yaml:"mode" env-default:"prod"`
-	HttpServer `yaml:"http_server"`
+	Env         string `yaml:"env" env-default:"prod"`
+	StoragePath string `yaml:"storage_path" env-default:"./blockchains"`
+	HttpServer  `yaml:"http_server"`
 }
 
 type HttpServer struct {
 	Address     string        `yaml:"address" env-default:"localhost:1436"`
 	Timeout     time.Duration `yaml:"timeout" env-default:"4s"`
 	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
-
 }
 
 func GetConf() *Config {
-	configPath := os.Getenv("way-srv-config")
+	configPath := os.Getenv("config")
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		panic("Can`t read a config!")
+		panic("Can`t open a config!\n" + "Config Path is " + configPath)
 	}
 
 	var cfg Config

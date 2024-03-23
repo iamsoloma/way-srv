@@ -3,7 +3,7 @@ module github.com/TinajXD/way-srv
 go 1.22.1
 
 require (
-	github.com/TinajXD/way v0.1.5
+	github.com/TinajXD/way v0.1.7
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 )
 

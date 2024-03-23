@@ -1,10 +1,7 @@
 package types
 
-import "time"
-
 
 type CreateBlockChainRequest struct {
-	Chain string `json:"chain"`
+	ChainName string `json:"chainName"`
 	Genesis string `json:"genesis"`
-	Time_UTC time.Time `json:"time_utc"`
 }
