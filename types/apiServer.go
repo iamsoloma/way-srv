@@ -1,9 +1,8 @@
 package types
 
-
 type CreateBlockChainRequest struct {
 	ChainName string `json:"chainName"`
-	Genesis string `json:"genesis"`
+	Genesis   string `json:"genesis"`
 }
 
 type GetLastBlock struct {
@@ -12,5 +11,10 @@ type GetLastBlock struct {
 
 type GetBlockByID struct {
 	ChainName string `json:"chainName"`
-	ID int `json:"id"`
+	ID        int    `json:"id"`
+}
+
+type AddBlock struct {
+	ChainName string `json:"chainName"`
+	Data      []byte `json:"data"`
 }

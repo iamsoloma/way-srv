@@ -2,5 +2,5 @@ env: "local"
 storage_path: "./blockchains"
 http_server: 
   addres: "localhost:1436"
-  timeout: 4s
+  timeout: 10s
   idle_timeout: 60s
