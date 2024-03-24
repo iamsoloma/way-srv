@@ -1,6 +1,6 @@
 env: "prod"
 storage_path: "./blockchains"
 http_server: 
-  addres: "localhost:1436"
-  timeout: 10s
-  idle_timeout: 60s
+  addres: "0.0.0.0:1436"
+  timeout: 4s
+  idle_timeout: 30s

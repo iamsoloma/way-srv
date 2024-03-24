@@ -28,6 +28,8 @@ func main() {
 	apiServer := api.ApiServer{
 		Addr: cfg.HttpServer.Address,
 		StoragePath: cfg.StoragePath,
+		TimeOut: cfg.HttpServer.Timeout,
+		IdleTimeOut: cfg.HttpServer.IdleTimeout,
 	}
 
 	fmt.Println("API server listening on ", cfg.HttpServer.Address)
