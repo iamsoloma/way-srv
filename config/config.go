@@ -9,6 +9,7 @@ import (
 
 type Config struct {
 	Env         string `yaml:"env" env-default:"prod"`
+	Mode string `yaml:"mode" env-required:"true"`
 	StoragePath string `yaml:"storage_path" env-default:"./blockchains"`
 	HttpServer  `yaml:"http_server"`
 }
