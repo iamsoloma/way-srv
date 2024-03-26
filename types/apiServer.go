@@ -5,16 +5,20 @@ type CreateBlockChainRequest struct {
 	Genesis   string `json:"genesis"`
 }
 
-type GetLastBlock struct {
+type DeleteBlockChainRequest struct {
 	ChainName string `json:"chainName"`
 }
 
-type GetBlockByID struct {
+type GetLastBlockRequest struct {
+	ChainName string `json:"chainName"`
+}
+
+type GetBlockByIDRequest struct {
 	ChainName string `json:"chainName"`
 	ID        int    `json:"id"`
 }
 
-type AddBlock struct {
+type AddBlockRequest struct {
 	ChainName string `json:"chainName"`
 	Data      []byte `json:"data"`
 }

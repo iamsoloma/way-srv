@@ -21,6 +21,7 @@ func (s *ApiServer) Start() error {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/create", s.handleCreateBlockChain)
+	mux.HandleFunc("/delete", s.handleDeleteBlockChain)
 	mux.HandleFunc("/getlastblock", s.handleGetLastBlock)
 	mux.HandleFunc("/getblockbyid", s.handleGetBlockByID)
 	mux.HandleFunc("/addblock", s.handleAddBlock)
@@ -59,8 +60,31 @@ func (s *ApiServer) handleCreateBlockChain(w http.ResponseWriter, r *http.Reques
 	w.WriteHeader(http.StatusCreated)
 }
 
+func (s *ApiServer) handleDeleteBlockChain(w http.ResponseWriter, r *http.Request) {
+	req := types.DeleteBlockChainRequest{}
+
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+
+	Exp := way.Explorer{
+		Path: s.StoragePath,
+		Name: req.ChainName,
+	}
+
+	if found, err := Exp.DeleteBlockChain(); err != nil && found {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	} else if !found && err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
+
+	
+}
+
 func (s *ApiServer) handleGetLastBlock(w http.ResponseWriter, r *http.Request) {
-	req := types.GetLastBlock{}
+	req := types.GetLastBlockRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -87,7 +111,7 @@ func (s *ApiServer) handleGetLastBlock(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *ApiServer) handleGetBlockByID(w http.ResponseWriter, r *http.Request) {
-	req := types.GetBlockByID{}
+	req := types.GetBlockByIDRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -114,7 +138,7 @@ func (s *ApiServer) handleGetBlockByID(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *ApiServer) handleAddBlock(w http.ResponseWriter, r *http.Request) {
-	req := types.AddBlock{}
+	req := types.AddBlockRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
