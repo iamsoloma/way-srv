@@ -21,7 +21,7 @@ type HttpServer struct {
 }
 
 func GetConf() *Config {
-	configPath := os.Getenv("config")
+	configPath := "./metadata/config.yaml" //os.Getenv("config")
 	if _, err := os.Stat(configPath); os.IsNotExist(err) {
 		panic("Can`t open a config!\n" + "Config Path is " + configPath)
 	}

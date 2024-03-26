@@ -14,15 +14,18 @@ RUN go build -o ./bin/way-srv
 
 FROM alpine as runner
 
-#Copy
 WORKDIR /way
-COPY --from=builder /build/bin/way-srv /way/way-srv
+
+#WorkSpace
+RUN mkdir blockchains
 
 #Config
-COPY config.yaml .
-ENV config=./config.yaml
+RUN mkdir metadata
 
-EXPOSE 1436-1436
+#Copy
+COPY --from=builder /build/bin/way-srv /way/way-srv
+
 
 #Run
+EXPOSE 1436-1436
 CMD ["./way-srv"]
