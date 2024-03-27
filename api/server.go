@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/TinajXD/way-srv/types"
@@ -20,11 +21,11 @@ type ApiServer struct {
 func (s *ApiServer) Start() error {
 	mux := http.NewServeMux()
 
-	mux.HandleFunc("/create", s.handleCreateBlockChain)
-	mux.HandleFunc("/delete", s.handleDeleteBlockChain)
-	mux.HandleFunc("/getlastblock", s.handleGetLastBlock)
-	mux.HandleFunc("/getblockbyid", s.handleGetBlockByID)
-	mux.HandleFunc("/addblock", s.handleAddBlock)
+	mux.HandleFunc("POST /create", s.handleCreateBlockChain)
+	mux.HandleFunc("DELETE /delete", s.handleDeleteBlockChain)
+	mux.HandleFunc("GET /getlastblock/{chainName}", s.handleGetLastBlock)
+	mux.HandleFunc("GET /getblockbyid/{chainName}/{id}", s.handleGetBlockByID)
+	mux.HandleFunc("PUT /addblock", s.handleAddBlock)
 
 	srv := http.Server{
 		Addr:         s.Addr,
@@ -84,15 +85,15 @@ func (s *ApiServer) handleDeleteBlockChain(w http.ResponseWriter, r *http.Reques
 }
 
 func (s *ApiServer) handleGetLastBlock(w http.ResponseWriter, r *http.Request) {
-	req := types.GetLastBlockRequest{}
+	/*req := types.GetLastBlockRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-	}
+	}*/
 
 	Exp := way.Explorer{
 		Path: s.StoragePath,
-		Name: req.ChainName,
+		Name: r.PathValue("chainName"),//req.ChainName
 	}
 
 	block, err := Exp.GetLastBlock()
@@ -111,18 +112,23 @@ func (s *ApiServer) handleGetLastBlock(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *ApiServer) handleGetBlockByID(w http.ResponseWriter, r *http.Request) {
-	req := types.GetBlockByIDRequest{}
+	/*req := types.GetBlockByIDRequest{}
 
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
-	}
+	}*/
 
 	Exp := way.Explorer{
 		Path: s.StoragePath,
-		Name: req.ChainName,
+		Name: r.PathValue("chainName"),//req.ChainName
 	}
 
-	block, err := Exp.GetBlockByID(req.ID)
+	id, err := strconv.Atoi(r.PathValue("id"))
+	if err!= nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+	}
+	
+	block, err := Exp.GetBlockByID(id/*req.ID*/)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 	}
