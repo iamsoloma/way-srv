@@ -149,7 +149,15 @@ func (s *ApiServer) handleAddBlock(w http.ResponseWriter, r *http.Request) {
 		Name: req.ChainName,
 	}
 
-	id, err := Exp.AddBlock(req.Data, time.Now().UTC())
+
+	var err error
+	var id int
+	if time.Time.IsZero(req.Time_UTC) {
+		id, err = Exp.AddBlock(req.Data, time.Now().UTC())
+	} else {
+		id, err = Exp.AddBlock(req.Data, req.Time_UTC)
+	}
+	
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
