@@ -13,5 +13,9 @@ Create a empty folder
 >/blockchains  
   
 Run: 
->docker pull ghcr.io/tinajxd/way-srv:v0.1.9  
->docker run -d -p 1436:1436 -v $(pwd)/blockchains:/way/blockchains -v $(pwd)/metadata:/way/metadata ghcr.io/tinajxd/way-srv:v0.1.9  
+```console
+docker pull ghcr.io/tinajxd/way-srv:v0.1.9  
+```
+```console
+docker run -d -p 1436:1436 -v $(pwd)/blockchains:/way/blockchains -v $(pwd)/metadata:/way/metadata ghcr.io/tinajxd/way-srv:v0.1.9  
+```
