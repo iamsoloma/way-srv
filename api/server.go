@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/TinajXD/way-srv/types"
@@ -54,11 +55,13 @@ func (s *ApiServer) handleCreateBlockChain(w http.ResponseWriter, r *http.Reques
 		Name: req.ChainName,
 	}
 
-	if err := Exp.CreateBlockChain(req.Genesis, time.Now().UTC()); err != nil {
+	if err := Exp.CreateBlockChain(req.Genesis, time.Now().UTC()); err != nil && strings.Contains(err.Error(), "BlockChain is Exist! File: ") {
+		http.Error(w, err.Error(), http.StatusFound)
+	} else if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+	} else {
+		w.WriteHeader(http.StatusCreated)
 	}
-
-	w.WriteHeader(http.StatusCreated)
 }
 
 func (s *ApiServer) handleDeleteBlockChain(w http.ResponseWriter, r *http.Request) {
@@ -81,7 +84,6 @@ func (s *ApiServer) handleDeleteBlockChain(w http.ResponseWriter, r *http.Reques
 		w.WriteHeader(http.StatusOK)
 	}
 
-	
 }
 
 func (s *ApiServer) handleGetLastBlock(w http.ResponseWriter, r *http.Request) {
@@ -93,7 +95,7 @@ func (s *ApiServer) handleGetLastBlock(w http.ResponseWriter, r *http.Request) {
 
 	Exp := way.Explorer{
 		Path: s.StoragePath,
-		Name: r.PathValue("chainName"),//req.ChainName
+		Name: r.PathValue("chainName"), //req.ChainName
 	}
 
 	block, err := Exp.GetLastBlock()
@@ -120,15 +122,15 @@ func (s *ApiServer) handleGetBlockByID(w http.ResponseWriter, r *http.Request) {
 
 	Exp := way.Explorer{
 		Path: s.StoragePath,
-		Name: r.PathValue("chainName"),//req.ChainName
+		Name: r.PathValue("chainName"), //req.ChainName
 	}
 
 	id, err := strconv.Atoi(r.PathValue("id"))
-	if err!= nil {
+	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 	}
-	
-	block, err := Exp.GetBlockByID(id/*req.ID*/)
+
+	block, err := Exp.GetBlockByID(id /*req.ID*/)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusNotFound)
 	}
@@ -155,7 +157,6 @@ func (s *ApiServer) handleAddBlock(w http.ResponseWriter, r *http.Request) {
 		Name: req.ChainName,
 	}
 
-
 	var err error
 	var id int
 	if time.Time.IsZero(req.Time_UTC) {
@@ -163,7 +164,7 @@ func (s *ApiServer) handleAddBlock(w http.ResponseWriter, r *http.Request) {
 	} else {
 		id, err = Exp.AddBlock(req.Data, req.Time_UTC)
 	}
-	
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
